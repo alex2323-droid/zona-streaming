@@ -1,0 +1,25 @@
+{
+  "entities": {
+    "Client": {
+      "title": "Client",
+      "description": "A client subscription record",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "netflixAccount": { "type": "string", "maxLength": 100 },
+        "paymentAmountUsd": { "type": "number" },
+        "paymentDay": { "type": "number" },
+        "lastPaymentDate": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["pending", "paid"] },
+        "email": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["name", "netflixAccount", "paymentAmountUsd", "paymentDay", "status"]
+    }
+  },
+  "firestore": {
+    "clients/{clientId}": {
+      "schema": { "$ref": "#/entities/Client" },
+      "description": "The collection of clients"
+    }
+  }
+}

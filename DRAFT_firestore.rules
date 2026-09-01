@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidClient(data) {
+      return data.keys().hasAll(['name', 'netflixAccount', 'paymentAmountUsd', 'paymentDay', 'status'])
+        && data.name is string && data.name.size() <= 100
+        && data.netflixAccount is string && data.netflixAccount.size() <= 100
+        && (data.paymentAmountUsd is number || data.paymentAmountUsd is int || data.paymentAmountUsd is float)
+        && (data.paymentDay is number || data.paymentDay is int || data.paymentDay is float)
+        && data.status in ['pending', 'paid']
+        && (!('email' in data.keys()) || (data.email is string && data.email.size() <= 100))
+        && (!('lastPaymentDate' in data.keys()) || (data.lastPaymentDate is string && data.lastPaymentDate.size() <= 100));
+    }
+
+    match /clients/{clientId} {
+      // Allow read and list for anyone since there is no authentication in this app
+      allow read: if true;
+      allow create: if isValidClient(incoming()) && incoming().keys().size() <= 7;
+      allow update: if isValidClient(incoming()) && incoming().keys().size() <= 7;
+      allow delete: if true;
+    }
+  }
+}

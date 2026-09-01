@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    @apply bg-[#0A0A0B] text-slate-300 font-sans m-0 h-full overflow-hidden;
+  }
+  html, #root {
+    @apply h-full m-0;
+  }
+}
